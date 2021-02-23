@@ -1,0 +1,57 @@
+/* You can add global styles to this file, and also import other style files */
+@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+
+.margin-bottom-20
+{
+    margin-bottom: 20pt;
+}
+
+.margin-top-20
+{
+    margin-top: 20pt;
+}
+
+.margin-left-20
+{
+    margin-left: 20pt;
+}
+
+.margin-bottom-10
+{
+    margin-bottom: 10pt;
+}
+
+.margin-top-10
+{
+    margin-top: 10pt;
+}
+
+.margin-left-10
+{
+    margin-left: 10pt;
+}
+
+.modal-popup
+{
+    background-color:#ebebf1fb;
+    max-width: 800px
+}
+
+.header-font
+{
+    font-weight: bold;
+    font-size: 15pt;
+    font-family:Arial, Helvetica, sans-serif;
+}
+.center-align
+{
+    text-align: center;
+}
+
+.normal-font
+{
+    font-weight: normal;
+    font-size: 11pt;
+    font-family:Arial, Helvetica, sans-serif;
+}
