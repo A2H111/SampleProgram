@@ -7,7 +7,7 @@ namespace SalesDetailsAPI.Models
 {
     public class Sales
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string stateName { get; set;}
         public string Month { get; set; }
         public int Value { get; set; }

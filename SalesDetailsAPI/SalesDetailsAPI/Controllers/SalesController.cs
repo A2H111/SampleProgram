@@ -20,7 +20,6 @@ namespace SalesDetailsAPI.Controllers
         {
             _salesRepository = salesRepository;
         }
-
         
         [HttpGet]
         public IActionResult Get()
@@ -32,8 +31,15 @@ namespace SalesDetailsAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]Sales[] saleValue)
         {
-            var result = _salesRepository.InsertSalesDetails(saleValue);
-            return Ok(result);
+            try
+            {
+               var result = _salesRepository.InsertSalesDetails(saleValue);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 

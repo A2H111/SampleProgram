@@ -37,10 +37,21 @@ namespace SalesDetailsAPI
             });
             services.AddCors(options =>
             {
+        //        options.AddDefaultPolicy(
+        //builder =>
+        //{
+        //    builder.WithOrigins("https://localhost:44331")
+        //    .AllowAnyHeader()
+        //    .AllowAnyMethod()
+        //    .AllowCredentials();
+        //});
                 options.AddPolicy(name: "SalesDetailsCorsPolicy",
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://localhost:4200");
+                                      builder.WithOrigins("http://localhost:4200")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod()
+                                      .AllowCredentials();
                                   });
             });
             services.AddControllers();
