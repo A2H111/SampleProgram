@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http'
+import {HttpClient, HttpHeaders} from '@angular/common/http'
 import { SalesRecord } from '../interfaces/salesRecord';
 import { Observable, ObservedValueOf } from 'rxjs';
 
@@ -8,7 +8,7 @@ import { Observable, ObservedValueOf } from 'rxjs';
 })
 export class SalesDataHttpService {
 
-  private apibaseurl = "https://localhost:44378/api/sales";
+  private apibaseurl = "http://localhost:58988/api/Sales";
    private salesRecordList:SalesRecord[]=[];
   constructor(private _httpClient:HttpClient) { }
 
@@ -16,4 +16,13 @@ export class SalesDataHttpService {
   {
       return this._httpClient.get<any>(this.apibaseurl);
   }
+
+  insertSalesData(saleValue: SalesRecord[]): void {
+    const headers = {
+        headers: new HttpHeaders({
+            'Content-Type': 'application/json'
+        })
+    };
+     this._httpClient.post<any>(this.apibaseurl, saleValue).subscribe();
+}
 }

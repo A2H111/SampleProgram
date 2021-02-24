@@ -1,6 +1,7 @@
 export interface SalesRecord
 {
+    Id:number;
     Month:string;
     stateName:string;
-    value:number;
+    Value:number;
 }

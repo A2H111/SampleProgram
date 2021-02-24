@@ -8,6 +8,7 @@ import { AgGridAngular } from "ag-grid-angular";
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { AppGlobalDataService } from '../services/app-global-data-service';
 import { UtilService } from '../services/util-service';
+import { AddSalesDataComponent } from '../add-sales-data/add-sales-data.component';
 
 @Component({
   selector: 'app-xyz-sales-list',
@@ -33,46 +34,75 @@ export class XyzSalesListComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this._salesDataHttpService.getSalesData()
-    .pipe(takeUntil(this.ngUnsubscribe))
-    .subscribe(data => {
-      this.salesDataList = data["result"];
-      this.salesGroupedByState = this._utilService.groupByFuntion(this.salesDataList, 'stateName');   
-      this.salesGroupedByMonth = this._utilService.groupByFuntion(this.salesDataList, 'month');  
-      
-      this.salesGroupedByMonth.forEach(i => {
-        this.monthArray.push(i.key);
-      });
-      this._appGlobalDataService.monthNames = this.monthArray;
-
-      this.columnDefs = [
-        { headerName: '', field: 'month' },
-      ];
-      this.salesGroupedByState.forEach(s => {
-        this.columnDefs.push({ headerName: s.key , field: s.key});      
-      });
-      this.rowData=[];
-      this.salesGroupedByMonth.forEach(s => {
-        var jsonObj = {};
-        jsonObj["month"] = s.key;
-        s.values.forEach(v=> { jsonObj[v.stateName] = (v.value > 0 ? v.value : 0);});
-        this.rowData.push(jsonObj);
-      });
-    });
+    this.onLoadSalesData();
   }
 
+onLoadSalesData()
+{
+  //Get Sales data from database. Used takeUntil to resolve the memory leak issue with subscribe
+  this._salesDataHttpService.getSalesData()
+  .pipe(takeUntil(this.ngUnsubscribe))
+  .subscribe(data => {
+    this.salesDataList = data["result"];
+    //Groupby the data by State. This is to find the column header required for the grid
+    this.salesGroupedByState = this._utilService.groupByFuntion(this.salesDataList, 'stateName');   
+    //Group by the data by Month. This is to find the row header required for the grid
+    this.salesGroupedByMonth = this._utilService.groupByFuntion(this.salesDataList, 'month');  
+    //Get the Month array extracted from data and assign it to global data service
+    this.onGetMonthArray();
+    
+    this.columnDefs = [
+      { headerName: '', field: 'month' },
+    ];
+    this.salesGroupedByState.forEach(s => {
+      this.columnDefs.push({ headerName: s.key , field: s.key});      
+    });
+    this.rowData=[];
+    this.salesGroupedByMonth.forEach(s => {
+      var jsonObj = {};
+      jsonObj["month"] = s.key;
+      s.values.forEach(v=> { jsonObj[v.stateName] = (v.value > 0 ? v.value : 0);});
+      this.rowData.push(jsonObj);
+    });
+    //set the rowdata to refresh grid
+    this.gridApi.setRowData(this.rowData);
+  });
+
+}
+
+onGetMonthArray()
+{
+  //Loop through the grouped my month data and get the key out which will give the month names with out duplicates
+  this.salesGroupedByMonth.forEach(i => {
+    this.monthArray.push(i.key);
+  });
+  //Assign it to global data service
+  this._appGlobalDataService.monthNames = this.monthArray;
+
+}
+
+  //Code to open the Modal Popup window. we used Ngbootstap modal popup window
+  onAddNewRow(){   
+    this.modalOption.keyboard = false;
+    this.modalOption.size = 'lg';
+    const modalRef =this._modalPopup.open(AddSalesDataComponent, this.modalOption);   
+    modalRef.result.then((result) => {
+      debugger;
+          if (result) {
+                 this.onLoadSalesData();
+          }
+      });
+    var columnIndex = this.gridApi.getDisplayedRowCount();
+    this.gridApi.setRowData(this.rowData);
+  }
+
+  //Ag Grid specific methods
   onAddNewColumn() {
     var columnDefs = this.gridApi.getColumnDefs();
     this.colDefsAthleteExcluded.forEach(function(colDef) {
       columnDefs.push(colDef);
     });     
     this.columnDefs = columnDefs;
-  }
-
-  onAddNewRow(){   
-    var columnIndex = this.gridApi.getDisplayedRowCount();
-    this.rowData[columnIndex] = { month: 'April', value: 500 };
-    this.gridApi.setRowData(this.rowData);
   }
 
   onGridReady(params:any) {
